@@ -26,51 +26,19 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     /**
-     * AuthenticationManager: Manejador de autenticación de Spring Security.
-     */
-    private final AuthenticationManager authenticationManager;
-
-    /**
-     * JwtUtil: Utilidad para la generación y validación de JWT.
-     */
-    private final JwtUtil jwtUtil;
-
-    /**
-     * UserDetailsService: Servicio para cargar detalles de usuario.
-     */
-    private final UserDetailsService userDetailsService;
-
-    /**
      * UserService: Servicio de operaciones de usuario.
      */
     private final UserService userService;
 
     /**
-     * UserRepository: Repositorio de usuarios.
-     */
-    private final UserRepository userRepository;
-
-    /**
      * Constructor para la inyección de dependencias.
      *
-     * @param authenticationManager manejador de autenticación
-     * @param jwtUtil utilidad para manejo de JWT
-     * @param userDetailsService servicio para obtener detalles de usuario
      * @param userService servicio de usuario
-     * @param userRepository repositorio de usuarios
      */
     public UserController(
-            AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil,
-            UserDetailsService userDetailsService,
-            UserService userService,
-            UserRepository userRepository)
+            UserService userService )
     {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     /**

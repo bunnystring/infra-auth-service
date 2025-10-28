@@ -12,7 +12,7 @@ import java.util.UUID;
 
 /**
  * Clase base para entidades con auditoria de fechas y control de concurrencia.
- * Proporciona campos para fecha de creación, fehca de ultima moficiación para concurrencia optimista.
+ * Proporciona campos para fecha de creación, fecha de ultima modificación para concurrencia optimista.
  * @author bunnystring
  * @since 2025-10-27
  * @version 1.0

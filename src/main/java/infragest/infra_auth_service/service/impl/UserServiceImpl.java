@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
 
     /**
-     * Constructor con parametros de la clase.
+     * Constructor para la inyección de dependencias.
      * @param authenticationManager
      * @param userDetailsService
      * @param userRepository
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Autentica un usuario y genera la respuesta de autenticación con token JWT.
+     * Auténtica un usuario y genera la respuesta de autenticación con token JWT.
      *
      * @param loginRequest los datos de autenticación del usuario
      * @return la respuesta de autenticación con el usuario seguro y el token generado

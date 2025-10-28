@@ -48,7 +48,7 @@ public class User extends BaseEntity{
     private String password;
 
     /**
-     *Inidica si el correo electroníco del usuario ha sido verificado.
+     *Indica si el correo electroníco del usuario ha sido verificado.
      */
     @Column(name = "email_verified")
     private boolean emailVerified = false;

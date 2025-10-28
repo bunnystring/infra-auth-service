@@ -25,7 +25,7 @@ public interface UserService {
 
 
     /**
-     * Autentica un suario en el sistema
+     * Autentica un usuario en el sistema
      *
      * @param loginRequest los datos de autenticación del usuario
      * @return AuthResponse
