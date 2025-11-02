@@ -11,7 +11,7 @@ import infragest.infra_auth_service.model.RegisterRequest;
  *
  * @author bunnystring
  * @since 2025-10-28
- * @version 1.0
+ * @version 1.1
  */
 public interface UserService {
 
@@ -31,4 +31,12 @@ public interface UserService {
      * @return AuthResponse
      */
     AuthResponse login(LoginRequest loginRequest);
+
+    /**
+     * Renueva el access token usando un refresh token válido.
+     *
+     * @param refreshToken el refresh token enviado por el cliente
+     * @return AuthResponse con el nuevo access token (y opcionalmente un nuevo refresh token)
+     */
+    AuthResponse refreshToken(String refreshToken);
 }

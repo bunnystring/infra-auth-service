@@ -12,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * Controlador REST para operaciones de autenticación de usuarios.
  * Proporciona endpoints para registro y login con generación de JWT.
@@ -69,6 +71,19 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest){
         AuthResponse authResponse = userService.login(loginRequest);
+        return ResponseEntity.ok(authResponse);
+    }
+
+    /**
+     * Renueva el access token usando un refresh token válido.
+     *
+     * @param body El refresh token enviado por el cliente.
+     * @return Un ResponseEntity con un nuevo access token (y opcionalmente un nuevo refresh token) o un error.
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
+        String refreshToken = body.get("refreshToken");
+        AuthResponse authResponse = userService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
     }
 }
