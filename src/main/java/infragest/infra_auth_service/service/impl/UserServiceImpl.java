@@ -1,6 +1,7 @@
 package infragest.infra_auth_service.service.impl;
 
 import infragest.infra_auth_service.entity.User;
+import infragest.infra_auth_service.exception.InvalidJwtAuthenticationException;
 import infragest.infra_auth_service.exception.UserException;
 import infragest.infra_auth_service.model.AuthResponse;
 import infragest.infra_auth_service.model.LoginRequest;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Service;
  *
  * @author bunnystring
  * @since 2025-10-28
- * @version 1.0
+ * @version 1.1
  */
 @Slf4j
 @Service
@@ -135,8 +136,75 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow( () -> new UserException("User not found", UserException.Type.NOT_FOUND));
 
-        String token = jwtUtil.generateToken(userDetails.getUsername());
+        String accessToken = jwtUtil.generateToken(userDetails.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername(),
+                7 * 24 * 60 * 60 * 1000L // 7 días en milisegundos
+                 );
         UserSafeDto safeUser = new UserSafeDto(user.getName(), user.getEmail());
-        return new AuthResponse(safeUser, token);
+        return new AuthResponse(safeUser, accessToken, refreshToken);
+    }
+
+    /**
+     * Renueva el access token y el refresh token usando un refresh token válido.
+     *
+     * Este método valida el refresh token recibido, verifica su integridad y autenticidad,
+     * y si es válido, genera un nuevo access token y un nuevo refresh token para mantener
+     * la sesión activa del usuario sin necesidad de re-autenticación.
+     *
+     * @param refreshToken el refresh token enviado por el cliente
+     * @return AuthResponse con el usuario seguro, el nuevo access token y el nuevo refresh token
+     * @throws InvalidJwtAuthenticationException si el refresh token es inválido, expirado, mal formado o su firma no es válida
+     * @throws UserException si el usuario asociado al token no existe en el sistema
+     */
+    @Override
+    public AuthResponse refreshToken(String refreshToken) {
+
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token is missing",
+                    InvalidJwtAuthenticationException.Type.AUTHORIZATION_HEADER_MISSING
+            );
+        }
+
+        String email;
+
+        try {
+            email = jwtUtil.extractUsernameFromRefreshToken(refreshToken);
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token expired",
+                    InvalidJwtAuthenticationException.Type.UNSUPPORTED_TOKEN
+            );
+        } catch (io.jsonwebtoken.UnsupportedJwtException e) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token not supported",
+                    InvalidJwtAuthenticationException.Type.UNSUPPORTED_TOKEN
+            );
+        } catch (io.jsonwebtoken.MalformedJwtException e) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token malformed",
+                    InvalidJwtAuthenticationException.Type.MALFORMED_TOKEN
+            );
+        } catch (io.jsonwebtoken.SignatureException e) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token signature error",
+                    InvalidJwtAuthenticationException.Type.SIGNATURE_ERROR
+            );
+        } catch (IllegalArgumentException e) {
+            throw new InvalidJwtAuthenticationException(
+                    "Refresh token invalid",
+                    InvalidJwtAuthenticationException.Type.INVALID_TOKEN
+            );
+        }
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserException("User not found", UserException.Type.NOT_FOUND));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        String newAccessToken = jwtUtil.generateToken(userDetails.getUsername());
+        String newRefreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername(), 7 * 24 * 60 * 60 * 1000L);
+        UserSafeDto safeUser = new UserSafeDto(user.getName(), user.getEmail());
+
+        return new AuthResponse(safeUser, newAccessToken, newRefreshToken);
     }
 }

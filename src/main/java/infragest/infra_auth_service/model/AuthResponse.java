@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 
 /**
  * DTO para la respuesta de autenticación.
- * Contiene la información del usuario autenticado y el token JWT generado.
+ * Contiene la información del usuario autenticado, el access token y el refresh del token generado.
  *
  * @author bunnystring
  * @since 2025-10-28
- * @version 1.0
+ * @version 1.1
  */
 @Data
 @NoArgsConstructor
@@ -23,8 +23,12 @@ public class AuthResponse {
     private UserSafeDto user;
 
     /**
-     * Token JWT generado para el usuario autenticado.
+     * Access token JWT generado para el usuario autenticado.
      */
-    private String token;
+    private String accessToken;
 
+    /**
+     * Refresh token JWT generado para el usuario autenticado.
+     */
+    private String refreshToken;
 }
