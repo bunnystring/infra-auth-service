@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: infra-auth-service
+  config:
+    import: "configserver:"
+  profiles:
+    active: dev
+  cloud:
+    config:
+      uri: http://localhost:8888
