@@ -3,7 +3,9 @@ package infragest.infra_auth_service.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO para la solicitud de registro de usuario.
@@ -14,6 +16,8 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
 
     /**
